@@ -18,8 +18,8 @@ function renderNotes() {
         // Звёздочка
         const starBtn = document.createElement('button');
         starBtn.textContent = note.important ? '★' : '☆';
-        
-        
+        starBtn.style.marginRight = '10px';
+        starBtn.onclick = () => {
             notes[index].important = !notes[index].important;
             saveNotes();
             renderNotes();
