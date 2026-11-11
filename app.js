@@ -7,9 +7,12 @@ let notes = JSON.parse(localStorage.getItem('notes')) || [];
 notes = notes.map(n => typeof n === 'string' ? { text: n, important: false } : n);
 
 function saveNotes() {
-    localStorage.setItem('notes', JSON.stringify(notes));
+    try {
+        localStorage.setItem('notes', JSON.stringify(notes));
+    } catch (e) {
+        alert("Ошибка сохранения: хранилище переполнено или недоступно.");
+    }
 }
-
 function renderNotes() {
     notesList.innerHTML = '';
     notes.forEach((note, index) => {
@@ -48,11 +51,28 @@ function renderNotes() {
 
 addBtn.addEventListener('click', () => {
     const text = noteInput.value.trim();
-    if (text) {
-        notes.push({ text: text, important: false });
-        saveNotes();
-        renderNotes();
-        noteInput.value = '';
+    
+    // Проверка 1: пустой ввод
+    if (!text) {
+        alert("Ошибка: Заметка не может быть пустой!");
+        return;
+    }
+
+    // Проверка 2: слишком длинный текст
+    if (text.length > 500) {
+        alert("Ошибка: Заметка слишком длинная (максимум 500 символов).");
+        return;
+    }
+
+    notes.push({ text: text, important: false });
+    saveNotes();
+    renderNotes();
+    noteInput.value = '';
+});
+
+noteInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        addBtn.click();
     }
 });
 
